@@ -33,6 +33,7 @@ CONF_FORCE_WEEK_NUMBERS = "force_week_order_numbers"
 CONF_WEEKDAY_ORDER_NUMBER = "weekday_order_number"
 CONF_WEEK_ORDER_NUMBER = "week_order_number"
 CONF_DATE = "date"
+CONF_URL = "url"
 CONF_EXCLUDE_DATES = "exclude_dates"
 CONF_INCLUDE_DATES = "include_dates"
 CONF_MOVE_COUNTRY_HOLIDAYS = "move_country_holidays"
@@ -45,6 +46,7 @@ CONF_FIRST_DATE = "first_date"
 CONF_SENSORS = "sensors"
 CONF_VERBOSE_FORMAT = "verbose_format"
 CONF_DATE_FORMAT = "date_format"
+CONF_URL_FORMAT = "url_format"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
@@ -55,6 +57,7 @@ DEFAULT_PERIOD = 1
 DEFAULT_FIRST_WEEK = 1
 DEFAULT_VERBOSE_STATE = False
 DEFAULT_DATE_FORMAT = "%d-%b-%Y"
+DEFAULT_URL_FORMAT = "https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1"
 DEFAULT_VERBOSE_FORMAT = "on {date}, in {days} days"
 
 # Icons
@@ -76,6 +79,7 @@ FREQUENCY_OPTIONS = [
     "monthly",
     "annual",
     "group",
+    "aws",
 ]
 
 MONTH_OPTIONS = [
@@ -205,6 +209,7 @@ SENSOR_SCHEMA = vol.Schema(
         vol.Optional(CONF_ICON_TOMORROW, default=DEFAULT_ICON_TOMORROW): cv.icon,
         vol.Optional(CONF_VERBOSE_STATE, default=DEFAULT_VERBOSE_STATE): cv.boolean,
         vol.Optional(CONF_DATE_FORMAT, default=DEFAULT_DATE_FORMAT): cv.string,
+        vol.Optional(CONF_URL_FORMAT, default=DEFAULT_URL_FORMAT): cv.string,
         vol.Optional(CONF_VERBOSE_FORMAT, default=DEFAULT_VERBOSE_FORMAT): cv.string,
     }
 )
@@ -225,3 +230,4 @@ DAILY_FREQUENCY = ["every-n-days"]
 MONTHLY_FREQUENCY = ["monthly"]
 ANNUAL_FREQUENCY = ["annual"]
 GROUP_FREQUENCY = ["group"]
+URL_FREQUENCY = ["aws"]

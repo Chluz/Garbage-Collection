@@ -16,6 +16,7 @@ ATTR_NEXT_DATE = "next_date"
 ATTR_DAYS = "days"
 
 from homeassistant.const import CONF_NAME, WEEKDAYS, CONF_ENTITIES
+from aws import myCalendar
 from .const import (
     ATTRIBUTION,
     DEFAULT_NAME,
@@ -183,6 +184,7 @@ class GarbageCollection(Entity):
         self.__today = None
         self.__days = 0
         self.__date = config.get(CONF_DATE)
+        self.__url = config.get(CONF_URL)
         self.__entities = config.get(CONF_ENTITIES)
         self.__verbose_state = config.get(CONF_VERBOSE_STATE)
         self.__state = "" if bool(self.__verbose_state) else 2
@@ -190,6 +192,7 @@ class GarbageCollection(Entity):
         self.__icon_today = config.get(CONF_ICON_TODAY)
         self.__icon_tomorrow = config.get(CONF_ICON_TOMORROW)
         self.__date_format = config.get(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT)
+        self.__url_format = config.get(CONF_URL_FORMAT, DEFAULT_URL_FORMAT)
         self.__verbose_format = config.get(CONF_VERBOSE_FORMAT, DEFAULT_VERBOSE_FORMAT)
         self.__icon = self.__icon_normal
 
@@ -336,6 +339,22 @@ class GarbageCollection(Entity):
             candidate_date = date(year, conf_date.month, conf_date.day)
             if candidate_date < day1:
                 candidate_date = date(year + 1, conf_date.month, conf_date.day)
+            return candidate_date
+        elif self.__frequency == "aws":
+            # Abfallwirtschaft Stuttgart
+            if self.__url is None:
+                _LOGGER.error(
+                    "(%s) Please configure the URL for the Stuttgart AWS server.",
+                    self.__name,
+                )
+                return None
+            conf_url = self.__url
+            myCal = myCalendar(url)
+            myCal.getCalendar()
+            next_event, next_date = myCal.getNextDate()
+            candidate_date = date(next_date.year, next_date.month, next_date.day)
+            if candidate_date < day1:
+                candidate_date = date(year + 1, next_date.month, next_date.day)
             return candidate_date
         elif self.__frequency == "group":
             if self.__entities is None:

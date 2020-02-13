@@ -18,6 +18,7 @@ from .const import (
     MONTHLY_FREQUENCY,
     ANNUAL_FREQUENCY,
     GROUP_FREQUENCY,
+    URL_FREQUENCY,
     COUNTRY_CODES,
     DEFAULT_FIRST_MONTH,
     DEFAULT_LAST_MONTH,
@@ -28,6 +29,7 @@ from .const import (
     DEFAULT_VERBOSE_STATE,
     DEFAULT_VERBOSE_FORMAT,
     DEFAULT_DATE_FORMAT,
+    DEFAULT_URL_FORMAT,
     CONF_SENSOR,
     CONF_ENABLED,
     CONF_FREQUENCY,
@@ -37,6 +39,7 @@ from .const import (
     CONF_VERBOSE_STATE,
     CONF_VERBOSE_FORMAT,
     CONF_DATE_FORMAT,
+    CONF_URL_FORMAT,
     CONF_FIRST_MONTH,
     CONF_LAST_MONTH,
     CONF_COLLECTION_DAYS,
@@ -44,6 +47,7 @@ from .const import (
     CONF_WEEKDAY_ORDER_NUMBER,
     CONF_WEEK_ORDER_NUMBER,
     CONF_DATE,
+    CONF_URL,
     CONF_EXCLUDE_DATES,
     CONF_INCLUDE_DATES,
     CONF_MOVE_COUNTRY_HOLIDAYS,
@@ -101,6 +105,9 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 ):
                     # Annual and group schedule is different (does not have days)
                     return await self.async_step_annual_group()
+                elif user_input[CONF_FREQUENCY] in URL_FREQUENCY:
+                    # url schedule is different (does not have days or date)
+                    return await self.async_step_url()
                 elif user_input[CONF_FREQUENCY] in DAILY_FREQUENCY:
                     return await self.async_step_final()
                 else:
@@ -138,6 +145,8 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 verbose_format = user_input[CONF_VERBOSE_FORMAT]
             if CONF_DATE_FORMAT in user_input:
                 date_format = user_input[CONF_DATE_FORMAT]
+            if CONF_URL_FORMAT in user_input:
+                url_format = user_input[CONF_URL_FORMAT]
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_NAME, default=name)] = str
         data_schema[vol.Required(CONF_FREQUENCY, default=frequency)] = vol.In(
@@ -149,9 +158,45 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
         data_schema[vol.Required(CONF_VERBOSE_STATE, default=verbose_state)] = bool
         data_schema[vol.Required(CONF_VERBOSE_FORMAT, default=verbose_format)] = str
         data_schema[vol.Required(CONF_DATE_FORMAT, default=date_format)] = str
+        data_schema[vol.Required(CONF_URL_FORMAT, default=url_format)] = str
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
         )
+
+    async def async_step_url(
+        self, user_input={}
+    ):  # pylint: disable=dangerous-default-value
+        """
+
+        C O N F I G U R A T I O N   S T E P   URL
+
+        """
+
+        self._errors = {}
+        updates = {}
+        if user_input is not None and user_input != {}:
+            if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
+                updates[CONF_URL] = user_input[CONF_URL]
+                if not isinstance(user_input[CONF_URL], str):
+                    self._errors["base"] = "url"
+            else:
+                updates[CONF_ENTITIES] = string_to_list(user_input[CONF_ENTITIES])
+                checked = True
+                for entity in updates[CONF_ENTITIES]:
+                    try:
+                        self.hass.states.get(entity).attributes.get(ATTR_NEXT_DATE)
+                    except:
+                        checked = False
+                if not checked:
+                    self._errors["base"] = "entities"
+            if self._errors == {}:
+                # Remember Frequency
+                self._data.update(updates)
+                # Call last step
+                return self.async_create_entry(
+                    title=self._data["name"], data=self._data
+                )
+        return await self._show_url_form(user_input)
 
     async def async_step_annual_group(
         self, user_input={}
@@ -207,6 +252,28 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
         )
+
+    async def _show_url_form(self, user_input):
+        """Configuration STEP 2 - URL (no days, no date) - SHOW FORM"""
+        # Defaults
+        url = ""
+        entities = ""
+        if user_input is not None:
+            if CONF_URL in user_input:
+                url = user_input[CONF_URL]
+            if CONF_ENTITIES in user_input:
+                entities = user_input[CONF_ENTITIES]
+        data_schema = OrderedDict()
+        if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
+            data_schema[vol.Required(CONF_URL, default=url)] = str
+        else:
+            data_schema[vol.Required(CONF_ENTITIES, default=entities)] = str
+        return self.async_show_form(
+            step_id="url",
+            data_schema=vol.Schema(data_schema),
+            errors=self._errors,
+        )
+
 
     async def async_step_detail(
         self, user_input={}
@@ -563,6 +630,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_DATE_FORMAT,
                 default=self.config_entry.options.get(
                     CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT
+                ),
+            )
+        ] = str
+        data_schema[
+            vol.Required(
+                CONF_URL_FORMAT,
+                default=self.config_entry.options.get(
+                    CONF_URL_FORMAT, DEFAULT_URL_FORMAT
                 ),
             )
         ] = str
