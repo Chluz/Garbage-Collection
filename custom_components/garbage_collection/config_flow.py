@@ -30,6 +30,7 @@ from .const import (
     DEFAULT_VERBOSE_FORMAT,
     DEFAULT_DATE_FORMAT,
     DEFAULT_URL_FORMAT,
+    DEFAULT_EVENT_FORMAT,
     CONF_SENSOR,
     CONF_ENABLED,
     CONF_FREQUENCY,
@@ -40,6 +41,7 @@ from .const import (
     CONF_VERBOSE_FORMAT,
     CONF_DATE_FORMAT,
     CONF_URL_FORMAT,
+    CONF_EVENT_FORMAT,
     CONF_FIRST_MONTH,
     CONF_LAST_MONTH,
     CONF_COLLECTION_DAYS,
@@ -48,6 +50,7 @@ from .const import (
     CONF_WEEK_ORDER_NUMBER,
     CONF_DATE,
     CONF_URL,
+    CONF_EVENT,
     CONF_EXCLUDE_DATES,
     CONF_INCLUDE_DATES,
     CONF_MOVE_COUNTRY_HOLIDAYS,
@@ -147,6 +150,8 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 date_format = user_input[CONF_DATE_FORMAT]
             if CONF_URL_FORMAT in user_input:
                 url_format = user_input[CONF_URL_FORMAT]
+            if CONF_EVENT_FORMAT in user_input:
+                event_format = user_input[CONF_EVENT_FORMAT]
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_NAME, default=name)] = str
         data_schema[vol.Required(CONF_FREQUENCY, default=frequency)] = vol.In(
@@ -159,6 +164,7 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
         data_schema[vol.Required(CONF_VERBOSE_FORMAT, default=verbose_format)] = str
         data_schema[vol.Required(CONF_DATE_FORMAT, default=date_format)] = str
         data_schema[vol.Required(CONF_URL_FORMAT, default=url_format)] = str
+        data_schema[vol.Required(CONF_EVENT_FORMAT, default=event_format)] = str
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
         )
@@ -179,6 +185,9 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 updates[CONF_URL] = user_input[CONF_URL]
                 if not isinstance(user_input[CONF_URL], str):
                     self._errors["base"] = "url"
+                updates[CONF_EVENT] = user_input[CONF_EVENT]
+                if not isinstance(user_input[CONF_EVENT], str):
+                    self._errors["base"] = "event"
             else:
                 updates[CONF_ENTITIES] = string_to_list(user_input[CONF_ENTITIES])
                 checked = True
@@ -257,15 +266,19 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
         """Configuration STEP 2 - URL (no days, no date) - SHOW FORM"""
         # Defaults
         url = ""
+        event = ""
         entities = ""
         if user_input is not None:
             if CONF_URL in user_input:
                 url = user_input[CONF_URL]
+            if CONF_EVENT in user_input:
+                event = user_input[CONF_EVENT]
             if CONF_ENTITIES in user_input:
                 entities = user_input[CONF_ENTITIES]
         data_schema = OrderedDict()
         if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
             data_schema[vol.Required(CONF_URL, default=url)] = str
+            data_schema[vol.Required(CONF_EVENT, default=event)] = str
         else:
             data_schema[vol.Required(CONF_ENTITIES, default=entities)] = str
         return self.async_show_form(
@@ -638,6 +651,14 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_URL_FORMAT,
                 default=self.config_entry.options.get(
                     CONF_URL_FORMAT, DEFAULT_URL_FORMAT
+                ),
+            )
+        ] = str
+        data_schema[
+            vol.Required(
+                CONF_EVENT_FORMAT,
+                default=self.config_entry.options.get(
+                    CONF_EVENT_FORMAT, DEFAULT_EVENT_FORMAT
                 ),
             )
         ] = str

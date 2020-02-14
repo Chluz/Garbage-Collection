@@ -185,6 +185,7 @@ class GarbageCollection(Entity):
         self.__days = 0
         self.__date = config.get(CONF_DATE)
         self.__url = config.get(CONF_URL)
+        self.__event = config.get(CONF_EVENT)
         self.__entities = config.get(CONF_ENTITIES)
         self.__verbose_state = config.get(CONF_VERBOSE_STATE)
         self.__state = "" if bool(self.__verbose_state) else 2
@@ -193,6 +194,7 @@ class GarbageCollection(Entity):
         self.__icon_tomorrow = config.get(CONF_ICON_TOMORROW)
         self.__date_format = config.get(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT)
         self.__url_format = config.get(CONF_URL_FORMAT, DEFAULT_URL_FORMAT)
+        self.__event_format = config.get(CONF_EVENT_FORMAT, DEFAULT_EVENT_FORMAT)
         self.__verbose_format = config.get(CONF_VERBOSE_FORMAT, DEFAULT_VERBOSE_FORMAT)
         self.__icon = self.__icon_normal
 
@@ -348,10 +350,17 @@ class GarbageCollection(Entity):
                     self.__name,
                 )
                 return None
+            if self.__event is None:
+                _LOGGER.error(
+                    "(%s) Please configure an event name for the Stuttgart AWS server.",
+                    self.__name,
+                )
+                return None
             conf_url = self.__url
-            myCal = myCalendar(url)
+            conf_event = self.__event
+            myCal = myCalendar(conf_url)
             myCal.getCalendar()
-            next_event, next_date = myCal.getNextDate()
+            next_event, next_date = myCal.getNextDate(specific_event = conf_event)
             candidate_date = date(next_date.year, next_date.month, next_date.day)
             if candidate_date < day1:
                 candidate_date = date(year + 1, next_date.month, next_date.day)
