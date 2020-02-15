@@ -175,7 +175,7 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 updates[CONF_URL] = user_input[CONF_URL]
                 if not isinstance(user_input[CONF_URL], str):
                     self._errors["base"] = "url"
-                updates[CONF_EVENT] = user_input[CONF_EVENT]
+                updates.update(CONF_EVENT=user_input[CONF_EVENT])
                 if not isinstance(user_input[CONF_EVENT], str):
                     self._errors["base"] = "event"
             else:
@@ -687,10 +687,10 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         updates = {}
         if user_input is not None and user_input != {}:
             if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
-                updates[CONF_URL] = user_input[CONF_URL]
+                updates.[CONF_URL] = user_input[CONF_URL]
                 if not isinstance(user_input[CONF_URL], str):
                     self._errors["base"] = "url"
-                updates[CONF_EVENT] = user_input[CONF_EVENT]
+                updates.update(CONF_EVENT=user_input[CONF_EVENT])
                 if not isinstance(user_input[CONF_EVENT], str):
                     self._errors["base"] = "event"
             else:
