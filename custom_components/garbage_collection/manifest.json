@@ -15,7 +15,8 @@
     "uuid",
     "voluptuous",
     "ics",
-    "requests"
+    "requests",
+    "django"
   ],
   "homeassistant": "0.96.0"
 }
