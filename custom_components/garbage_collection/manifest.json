@@ -12,8 +12,10 @@
     "integrationhelper>=0.2.2",
     "holidays>=0.10.1",
     "typing",
-    "uuid", 
-    "voluptuous"
+    "uuid",
+    "voluptuous",
+    "ics",
+    "requests"
   ],
   "homeassistant": "0.96.0"
 }

@@ -24,6 +24,15 @@
                     "entities": "List of entities (comma separated)"
                 }
             },
+            "url": {
+                "title": "Garbage Collection - Additional parameters",
+                "description": "Enter the Abfallwirtschaft Stuttgart Calendar URL (obtain it at https://service.stuttgart.de/lhs-services/aws/abfallkalender)",
+                "data": {
+                    "date": "URL (e.g. https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1)",
+                    "event": "Event Name (e.g. Restmüll 02-wöchentl.)",
+                    "entities": "List of entities (comma separated)"
+                }
+            },
             "detail": {
                 "title": "Garbage Collection - Collection days",
                 "description": "Select one or more collection days. More details here: https://github.com/bruxy70/Garbage-Collection",
@@ -75,7 +84,7 @@
             "period": "Period must be a number between 1 and 52",
             "first_week": "Firsr week must be a number between 1 and 52",
             "date": "Invalid date format!"
-            
+
         },
         "abort": {
             "single_instance_allowed": "Only a single configuration of Garbage Collection is allowed."

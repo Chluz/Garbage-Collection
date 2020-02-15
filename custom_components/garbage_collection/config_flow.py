@@ -255,8 +255,8 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
     async def _show_url_form(self, user_input):
         """Configuration STEP 2 - URL (no days, no date) - SHOW FORM"""
         # Defaults
-        url = ""
-        event = ""
+        url = "https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1"
+        event = "Restmüll 02-wöchentl."
         entities = ""
         if user_input is not None:
             if CONF_URL in user_input:
