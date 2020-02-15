@@ -687,7 +687,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         updates = {}
         if user_input is not None and user_input != {}:
             if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
-                updates.[CONF_URL] = user_input[CONF_URL]
+                updates[CONF_URL] = user_input[CONF_URL]
                 if not isinstance(user_input[CONF_URL], str):
                     self._errors["base"] = "url"
                 updates.update(CONF_EVENT=user_input[CONF_EVENT])
