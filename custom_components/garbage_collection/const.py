@@ -47,8 +47,6 @@ CONF_FIRST_DATE = "first_date"
 CONF_SENSORS = "sensors"
 CONF_VERBOSE_FORMAT = "verbose_format"
 CONF_DATE_FORMAT = "date_format"
-CONF_URL_FORMAT = "url_format"
-CONF_EVENT_FORMAT = "event_format"
 
 # Defaults
 DEFAULT_NAME = DOMAIN
@@ -59,8 +57,6 @@ DEFAULT_PERIOD = 1
 DEFAULT_FIRST_WEEK = 1
 DEFAULT_VERBOSE_STATE = False
 DEFAULT_DATE_FORMAT = "%d-%b-%Y"
-DEFAULT_URL_FORMAT = "https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1"
-DEFAULT_EVENT_FORMAT = "'Restmüll 01-wöchentl.'"
 DEFAULT_VERBOSE_FORMAT = "on {date}, in {days} days"
 
 # Icons
@@ -212,8 +208,6 @@ SENSOR_SCHEMA = vol.Schema(
         vol.Optional(CONF_ICON_TOMORROW, default=DEFAULT_ICON_TOMORROW): cv.icon,
         vol.Optional(CONF_VERBOSE_STATE, default=DEFAULT_VERBOSE_STATE): cv.boolean,
         vol.Optional(CONF_DATE_FORMAT, default=DEFAULT_DATE_FORMAT): cv.string,
-        vol.Optional(CONF_URL_FORMAT, default=DEFAULT_URL_FORMAT): cv.string,
-        vol.Optional(CONF_EVENT_FORMAT, default=DEFAULT_EVENT_FORMAT): cv.string,
         vol.Optional(CONF_VERBOSE_FORMAT, default=DEFAULT_VERBOSE_FORMAT): cv.string,
     }
 )

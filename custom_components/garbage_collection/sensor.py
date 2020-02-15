@@ -16,7 +16,7 @@ ATTR_NEXT_DATE = "next_date"
 ATTR_DAYS = "days"
 
 from homeassistant.const import CONF_NAME, WEEKDAYS, CONF_ENTITIES
-from aws import myCalendar
+from .aws import myCalendar
 from .const import (
     ATTRIBUTION,
     DEFAULT_NAME,
@@ -193,8 +193,6 @@ class GarbageCollection(Entity):
         self.__icon_today = config.get(CONF_ICON_TODAY)
         self.__icon_tomorrow = config.get(CONF_ICON_TOMORROW)
         self.__date_format = config.get(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT)
-        self.__url_format = config.get(CONF_URL_FORMAT, DEFAULT_URL_FORMAT)
-        self.__event_format = config.get(CONF_EVENT_FORMAT, DEFAULT_EVENT_FORMAT)
         self.__verbose_format = config.get(CONF_VERBOSE_FORMAT, DEFAULT_VERBOSE_FORMAT)
         self.__icon = self.__icon_normal
 

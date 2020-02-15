@@ -29,8 +29,6 @@ from .const import (
     DEFAULT_VERBOSE_STATE,
     DEFAULT_VERBOSE_FORMAT,
     DEFAULT_DATE_FORMAT,
-    DEFAULT_URL_FORMAT,
-    DEFAULT_EVENT_FORMAT,
     CONF_SENSOR,
     CONF_ENABLED,
     CONF_FREQUENCY,
@@ -40,8 +38,6 @@ from .const import (
     CONF_VERBOSE_STATE,
     CONF_VERBOSE_FORMAT,
     CONF_DATE_FORMAT,
-    CONF_URL_FORMAT,
-    CONF_EVENT_FORMAT,
     CONF_FIRST_MONTH,
     CONF_LAST_MONTH,
     CONF_COLLECTION_DAYS,
@@ -148,10 +144,6 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
                 verbose_format = user_input[CONF_VERBOSE_FORMAT]
             if CONF_DATE_FORMAT in user_input:
                 date_format = user_input[CONF_DATE_FORMAT]
-            if CONF_URL_FORMAT in user_input:
-                url_format = user_input[CONF_URL_FORMAT]
-            if CONF_EVENT_FORMAT in user_input:
-                event_format = user_input[CONF_EVENT_FORMAT]
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_NAME, default=name)] = str
         data_schema[vol.Required(CONF_FREQUENCY, default=frequency)] = vol.In(
@@ -163,8 +155,6 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
         data_schema[vol.Required(CONF_VERBOSE_STATE, default=verbose_state)] = bool
         data_schema[vol.Required(CONF_VERBOSE_FORMAT, default=verbose_format)] = str
         data_schema[vol.Required(CONF_DATE_FORMAT, default=date_format)] = str
-        data_schema[vol.Required(CONF_URL_FORMAT, default=url_format)] = str
-        data_schema[vol.Required(CONF_EVENT_FORMAT, default=event_format)] = str
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
         )
@@ -643,22 +633,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 CONF_DATE_FORMAT,
                 default=self.config_entry.options.get(
                     CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT
-                ),
-            )
-        ] = str
-        data_schema[
-            vol.Required(
-                CONF_URL_FORMAT,
-                default=self.config_entry.options.get(
-                    CONF_URL_FORMAT, DEFAULT_URL_FORMAT
-                ),
-            )
-        ] = str
-        data_schema[
-            vol.Required(
-                CONF_EVENT_FORMAT,
-                default=self.config_entry.options.get(
-                    CONF_EVENT_FORMAT, DEFAULT_EVENT_FORMAT
                 ),
             )
         ] = str
