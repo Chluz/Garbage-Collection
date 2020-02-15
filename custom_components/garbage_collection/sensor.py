@@ -359,8 +359,7 @@ class GarbageCollection(Entity):
             conf_url = self.__url
             conf_event = self.__event
             myCal = myCalendar(conf_url)
-            myCal.getCalendar()
-            next_event, next_date = myCal.getNextDate(specific_event = conf_event)
+            next_event, next_date = myCal.getNextDate(specific_event=conf_event)
             candidate_date = date(next_date.year, next_date.month, next_date.day)
             if candidate_date < day1:
                 candidate_date = date(year + 1, next_date.month, next_date.day)
