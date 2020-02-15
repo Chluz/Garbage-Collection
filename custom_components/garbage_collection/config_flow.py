@@ -255,8 +255,8 @@ class GarbageCollectionFlowHandler(config_entries.ConfigFlow):
     async def _show_url_form(self, user_input):
         """Configuration STEP 2 - URL (no days, no date) - SHOW FORM"""
         # Defaults
-        url = "https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1"
-        event = "Restmüll 02-wöchentl."
+        url = ""
+        event = ""
         entities = ""
         if user_input is not None:
             if CONF_URL in user_input:
@@ -574,6 +574,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 or user_input[CONF_FREQUENCY] in GROUP_FREQUENCY
             ):
                 return await self.async_step_annual_group()
+            elif user_input[CONF_FREQUENCY] in URL_FREQUENCY:
+                return await self.async_step_url()
             elif user_input[CONF_FREQUENCY] in DAILY_FREQUENCY:
                 return await self.async_step_final()
             else:
@@ -673,6 +675,43 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
                 return self.async_create_entry(title="", data=self._data)
         return await self._show_annual_group_form(user_input)
 
+    async def async_step_url(
+        self, user_input={}
+    ):  # pylint: disable=dangerous-default-value
+        """
+
+        O P T I O N S   S T E P   2   F O R   URL
+
+        """
+        self._errors = {}
+        updates = {}
+        if user_input is not None and user_input != {}:
+            if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
+                updates[CONF_URL] = user_input[CONF_URL]
+                if not isinstance(user_input[CONF_URL], str):
+                    self._errors["base"] = "url"
+                updates[CONF_EVENT] = user_input[CONF_EVENT]
+                if not isinstance(user_input[CONF_EVENT], str):
+                    self._errors["base"] = "event"
+            else:
+                updates[CONF_ENTITIES] = string_to_list(user_input[CONF_ENTITIES])
+                checked = True
+                for entity in updates[CONF_ENTITIES]:
+                    try:
+                        self.hass.states.get(entity).attributes.get(ATTR_NEXT_DATE)
+                    except:
+                        checked = False
+                if not checked:
+                    self._errors["base"] = "entities"
+            if self._errors == {}:
+                # Remember Frequency
+                clean_optional(self._data, CONF_URL)
+                clean_optional(self._data, CONF_EVENT)
+                self._data.update(updates)
+                # Call last step
+                return self.async_create_entry(title="", data=self._data)
+        return await self._show_url_form(user_input)
+
     async def _show_annual_group_form(self, user_input):
         """Configuration STEP 2 for Annual or Group - SHOW FORM"""
         # Defaults
@@ -692,6 +731,34 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             ] = str
         return self.async_show_form(
             step_id="annual_group",
+            data_schema=vol.Schema(data_schema),
+            errors=self._errors,
+        )
+
+    async def _show_url_form(self, user_input):
+        """Configuration STEP 2 for URL form- SHOW FORM"""
+        # Defaults
+        data_schema = OrderedDict()
+        if self._data[CONF_FREQUENCY] in URL_FREQUENCY:
+            data_schema[
+                vol.Optional(
+                    CONF_URL, default=self.config_entry.options.get(CONF_URL)
+                )
+            ] = str
+            data_schema[
+                vol.Optional(
+                    CONF_EVENT, default=self.config_entry.options.get(CONF_EVENT)
+                )
+            ] = str
+        else:
+            data_schema[
+                vol.Required(
+                    CONF_ENTITIES,
+                    default=",".join(self.config_entry.options.get(CONF_ENTITIES)),
+                )
+            ] = str
+        return self.async_show_form(
+            step_id="url",
             data_schema=vol.Schema(data_schema),
             errors=self._errors,
         )

@@ -28,7 +28,7 @@
                 "title": "Garbage Collection - Additional parameters",
                 "description": "Enter the Abfallwirtschaft Stuttgart Calendar URL (obtain it at https://service.stuttgart.de/lhs-services/aws/abfallkalender)",
                 "data": {
-                    "date": "URL (e.g. https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1)",
+                    "url": "URL (e.g. https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1)",
                     "event": "Event Name (e.g. Restmüll 02-wöchentl.)",
                     "entities": "List of entities (comma separated)"
                 }
@@ -83,8 +83,9 @@
             "weekday_order_number": "Select 1 or more days",
             "period": "Period must be a number between 1 and 52",
             "first_week": "Firsr week must be a number between 1 and 52",
-            "date": "Invalid date format!"
-
+            "date": "Invalid date format!",
+            "url": "Invalid url format!",
+            "event": "Invalid event name!"
         },
         "abort": {
             "single_instance_allowed": "Only a single configuration of Garbage Collection is allowed."
@@ -110,6 +111,15 @@
                 "description": "Enter the collection day date (e.g. 11/20 for November 20)",
                 "data": {
                     "date": "Date (mm/dd)",
+                    "entities": "List of entities (comma separated)"
+                }
+            },
+            "url": {
+                "title": "Garbage Collection - Additional parameters",
+                "description": "Enter the Abfallwirtschaft Stuttgart Calendar URL (obtain it at https://service.stuttgart.de/lhs-services/aws/abfallkalender)",
+                "data": {
+                    "url": "URL (e.g. https://service.stuttgart.de/lhs-services/aws/api/ical?street=Marienplatz&streetnr=1)",
+                    "event": "Event Name (e.g. Restmüll 02-wöchentl.)",
                     "entities": "List of entities (comma separated)"
                 }
             },
